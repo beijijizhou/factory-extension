@@ -1,38 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Factory Downloader</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        body {
-            width: 300px;
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-            padding: 1rem;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-    </style>
+  <title>Factory Document Downloader</title>
+  <style>
+    body {
+      width: 300px;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      margin: 5px 0;
+    }
+    a {
+      color: #1a0dab;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
-<body class="p-4 bg-gray-100 rounded-lg shadow-md">
-    <div class="container">
-        <h1 class="text-xl font-bold text-gray-800 mb-2">Factory Document Downloader</h1>
-        <p class="text-sm text-gray-600">Click the button to scan the current page for download links and initiate downloads.</p>
-
-        <button id="scanAndDownloadBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-            Scan & Download
-        </button>
-
-        <div id="statusMessage" class="mt-4 p-3 bg-blue-100 text-blue-800 rounded-lg text-sm hidden">
-            <!-- Status messages will appear here -->
-        </div>
-    </div>
-
-    <script src="popup.js"></script>
+<body>
+  <h3>Downloadable Links</h3>
+  <ul id="link-list"></ul>
+  <script src="popup.js"></script>
 </body>
 </html>
