@@ -9,6 +9,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 
+
 // Function to list <div> elements, filtering for those containing "2025" after collection
 function listAllDivs(tabId) {
     console.log(`Starting listAllDivs for tab ID: ${tabId}`);
@@ -18,12 +19,52 @@ function listAllDivs(tabId) {
             console.log('Content script started');
             return new Promise(resolve => {
                 // Function to collect divs from a given document or shadow root
+                function triggerDownload(link) {
+                    console.log(`Triggering download for link:`, { href: link.href, text: link.text });
+                    const clickEvent = new MouseEvent('click', {
+                        view: window,
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    link.dispatchEvent(clickEvent);
+                }
                 function collectDivs(root) {
                     const divs = root.querySelectorAll('div.cardHead__style-3fjzzt');
-                    return Array.from(divs).map((div, index) => ({
-                        id: index + 1,
-                        text: div.textContent.trim()
-                    }));
+                    const linkContainers = root.querySelectorAll('div.cardBody__style-2cItWp');
+                    console.log(`Found ${divs.length} divs with class 'cardHead__style-3fjzzt' and ${linkContainers.length} link containers with class 'cardBody__style-2cItWp' in root`);
+
+                    // Collect and log all <a> tags from cardBody__style-2cItWp before filtering
+                    const allLinks = Array.from(linkContainers).flatMap(container =>
+                        Array.from(container.querySelectorAll('a')).map((a, linkIndex) => ({
+                            href: a.href,
+                            text: a.innerText.trim(),
+                            element: a
+                        }))
+                    );
+
+                    // allLinks.forEach((link, index) => {
+                    //     console.log(link.text, '重新下载', { comparevalue: link.text === '重新下载' });
+                    // });
+                    // Filter for <a> tags with exact innerText "重新下载"
+                    const downloadLinks = allLinks.filter(link => link.text === '重新下载');
+                    console.log(`Found ${downloadLinks.length} <a> tags with text "重新下载"`);
+                    // Log and trigger download for each filtered <a> tag
+                    downloadLinks.forEach((link, index) => {
+                        console.log(`Filtered <a> #${index + 1} with "重新下载":`, { href: link.href, text: link.text });
+                        triggerDownload(link.element); // Trigger the download
+                    });
+
+                    return Array.from(divs).map((div, index) => {
+                        // Log the div for debugging
+                        console.log(`Div #${index + 1}:`, { id: index + 1, text: div.textContent.trim() });
+
+                        return {
+                            id: index + 1,
+                            text: div.textContent.trim(),
+                            has2025: div.textContent.trim().includes('2025'),
+                            downloadLinks: downloadLinks.map(({ href, text }) => ({ href, text })) // Exclude DOM element from return
+                        };
+                    });
                 }
 
                 // Check if the page is "ready" by looking for a div with "2025" in its text
